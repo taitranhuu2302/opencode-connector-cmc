@@ -1,9 +1,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugins": [
-    {
-      "package": "./src",
-      "options": {},
-    },
-  ],
+  // Intentionally no local plugin entry: this plugin is already installed
+  // globally, via the `plugins` entry in ~/.config/opencode/opencode.jsonc.
+  // Registering it here as well would load it twice — the duplicate registers
+  // the same provider, doubles the startup warnings and runs the catalog
+  // refresh twice. See "Global install" in README.md to re-enable it locally.
+  "plugins": [],
 }
