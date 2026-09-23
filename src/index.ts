@@ -1,7 +1,7 @@
 import { Plugin } from "@opencode/plugin/effect";
 import { Effect } from "effect";
 
-import { models, apiKeyMissing, provider } from "./provider.js";
+import { models, apiKeyMissing, integrationID, provider } from "./provider.js";
 
 export default Plugin.define({
   id: "opencode-connector-cmc",
@@ -9,6 +9,24 @@ export default Plugin.define({
     Effect.gen(function* () {
       yield* ctx.provider.transform((editor) => {
         editor.add({ info: provider, models });
+      });
+
+      // Register the integration so the provider shows up in `/connect`.
+      // This is what a plugin must do to become connectable; registering a
+      // provider alone only adds models, it does not add an entry to `/connect`.
+      yield* ctx.integration.transform((editor) => {
+        editor.update(integrationID, (item) => {
+          item.name = "Command Code";
+        });
+        editor.method.update({
+          integrationID,
+          method: { type: "key", label: "API key" },
+        });
+        // Matches how built-in integrations expose an env fallback.
+        editor.method.update({
+          integrationID,
+          method: { type: "env", names: ["CMD_API_KEY"] },
+        });
       });
 
       yield* Effect.logInfo("Command Code provider registered", {

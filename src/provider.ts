@@ -1,7 +1,14 @@
-import { Model, Provider } from "@opencode/plugin/effect";
+import { Integration, Model, Provider } from "@opencode/plugin/effect";
 
 /** Provider id used by `model: "<id>/<model>"` references in opencode.json(c). */
 export const providerID = Provider.ID.make("commandcode");
+
+/**
+ * Integration id. `/connect` lists *integrations*, not providers, so the
+ * provider stays invisible there until it is linked to one. The credential
+ * table behind `/connect` stores this same id (`connector_id`).
+ */
+export const integrationID = Integration.ID.make("commandcode");
 
 /**
  * Command Code Provider API.
@@ -32,6 +39,8 @@ export const provider: Provider.Info = {
   name: "Command Code",
   activation: "enabled",
   package: "@opencode/ai/providers/openai-compatible",
+  // Links the provider to the integration so `/connect` can collect credentials.
+  integrationID,
   settings: {
     baseURL,
     // Spread rather than `apiKey: undefined`, so the key is simply absent when unset.

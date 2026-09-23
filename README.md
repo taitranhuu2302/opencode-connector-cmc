@@ -61,10 +61,47 @@ Read them from `ctx.options` inside the plugin effect. `ctx.options` is
 `PluginOptions`, not a typed shape of your own, so narrow unknown values before
 use.
 
+## Connect in the TUI
+
+`/connect` lists **integrations**, not plugins. Two consequences:
+
+- Look for the integration name **"Command Code"**. The plugin id
+  `opencode-connector-cmc` never appears in `/connect` — it shows up in
+  `opencode plugin list` instead.
+- The plugin loads from **this project's** `opencode.jsonc`, so it only exists
+  for this directory. Starting OpenCode somewhere else (e.g. your home folder)
+  means no entry at all.
+
+Registering a provider alone adds models but nothing to connect to. `/connect`
+needs an integration, which is why `src/index.ts` registers one and
+`src/provider.ts` links it through `Provider.Info.integrationID`.
+
+Verify without opening the TUI:
+
+```sh
+opencode api --standalone GET /api/integration
+# {"id":"commandcode","name":"Command Code",
+#  "methods":[{"type":"key","label":"API key"},
+#             {"type":"env","names":["CMD_API_KEY"]}],"connections":[]}
+```
+
+`--standalone` matters: it runs a private server rooted at the current
+directory. The shared background service is anchored to one directory and will
+not show integrations from other locations.
+
 ## Credentials
 
-The plugin reads the key from the `CMD_API_KEY` environment variable and passes
-it to the adapter as a bearer token. Set it before starting OpenCode:
+The integration offers two methods, mirroring the built-in providers:
+
+| Method      | Behaviour                                              |
+| ----------- | ------------------------------------------------------ |
+| `key`       | Prompt for a secret, saved to the server SQLite DB      |
+| `env`       | Read `CMD_API_KEY` from the server process              |
+
+Preferred: connect through `/connect` so the key is stored by OpenCode.
+
+As a fallback the plugin also reads `CMD_API_KEY` itself and passes it to the
+adapter as a bearer token. Set it before starting OpenCode:
 
 ```sh
 export CMD_API_KEY="..."      # bash / zsh
