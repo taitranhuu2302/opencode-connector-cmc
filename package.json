@@ -1,0 +1,26 @@
+{
+  "name": "opencode-connector-cmc",
+  "version": "0.1.0",
+  "description": "OpenCode Effect plugin that exposes the Command Code Provider API as a provider.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "pack:dry": "bun pm pack --dry-run"
+  },
+  "dependencies": {
+    "@opencode/plugin": "2.0.15",
+    "effect": "4.0.0-rc.112"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}

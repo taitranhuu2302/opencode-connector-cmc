@@ -1,0 +1,8 @@
+node_modules/
+*.tgz
+*.log
+
+# Local secrets — never commit API keys
+.env
+.env.local
+.opencode/auth.json
